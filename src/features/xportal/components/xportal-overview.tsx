@@ -153,10 +153,10 @@ export default function XportalOverview() {
                 <div className='space-y-2.5'>
                   <div className='flex items-center justify-between'>
                     <span className='text-muted-foreground text-xs'>
-                      Avg Win Rate
+                      Win Rate
                     </span>
                     <span className='text-sm font-semibold'>
-                      {avgWinRate.toFixed(1)}%
+                      {formatPercent(avgWinRate)}
                     </span>
                   </div>
                   <div className='flex items-center justify-between'>
@@ -164,23 +164,15 @@ export default function XportalOverview() {
                       Avg ROI
                     </span>
                     <span className='text-sm font-semibold text-green-600 dark:text-green-400'>
-                      +{avgRoi.toFixed(2)}%
+                      {formatPercent(avgRoi, { showSign: true })}
                     </span>
                   </div>
                   <div className='flex items-center justify-between'>
                     <span className='text-muted-foreground text-xs'>
-                      Total Trades (7d)
+                      Recent Trades
                     </span>
                     <span className='text-sm font-semibold'>
-                      {totalTrades7d}
-                    </span>
-                  </div>
-                  <div className='flex items-center justify-between'>
-                    <span className='text-muted-foreground text-xs'>
-                      24h Trades
-                    </span>
-                    <span className='text-sm font-semibold'>
-                      {totalTrades24h}
+                      {formatCompactNumber(totalTrades24h)}
                     </span>
                   </div>
                 </div>
@@ -197,43 +189,26 @@ export default function XportalOverview() {
                 <div className='space-y-2.5'>
                   <div className='flex items-center justify-between'>
                     <span className='text-muted-foreground text-xs'>
-                      Avg Max Drawdown
+                      Max Drawdown
                     </span>
                     <span className='text-sm font-semibold text-red-600 dark:text-red-400'>
-                      -{avgMaxDrawdown.toFixed(1)}%
+                      {formatPercent(-avgMaxDrawdown)}
                     </span>
                   </div>
                   <div className='flex items-center justify-between'>
                     <span className='text-muted-foreground text-xs'>
-                      Avg Position Size
-                    </span>
-                    <span className='text-sm font-semibold tabular-nums'>
-                      {avgPositionSize.toLocaleString('en-US', {
-                        style: 'currency',
-                        currency: 'USD',
-                        minimumFractionDigits: 0
-                      })}
-                    </span>
-                  </div>
-                  <div className='flex items-center justify-between'>
-                    <span className='text-muted-foreground text-xs'>
-                      Total Agent P&L
-                    </span>
-                    <span className='text-sm font-semibold text-green-600 tabular-nums dark:text-green-400'>
-                      +
-                      {totalPnlAgents.toLocaleString('en-US', {
-                        style: 'currency',
-                        currency: 'USD',
-                        minimumFractionDigits: 0
-                      })}
-                    </span>
-                  </div>
-                  <div className='flex items-center justify-between'>
-                    <span className='text-muted-foreground text-xs'>
-                      Capital Utilization
+                      Position Size
                     </span>
                     <span className='text-sm font-semibold'>
-                      {((totalAllocated / totalValue) * 100).toFixed(0)}%
+                      {formatCompactCurrency(avgPositionSize)}
+                    </span>
+                  </div>
+                  <div className='flex items-center justify-between'>
+                    <span className='text-muted-foreground text-xs'>
+                      Capital Used
+                    </span>
+                    <span className='text-sm font-semibold'>
+                      {formatPercent((totalAllocated / totalValue) * 100)}
                     </span>
                   </div>
                 </div>
@@ -370,12 +345,8 @@ export default function XportalOverview() {
                   <span className='text-muted-foreground text-xs'>
                     Allocated Capital
                   </span>
-                  <span className='text-sm font-semibold tabular-nums'>
-                    {totalAllocated.toLocaleString('en-US', {
-                      style: 'currency',
-                      currency: 'USD',
-                      minimumFractionDigits: 0
-                    })}
+                  <span className='text-sm font-semibold'>
+                    {formatCompactCurrency(totalAllocated)}
                   </span>
                 </div>
                 <div className='flex items-center justify-between'>
@@ -383,7 +354,7 @@ export default function XportalOverview() {
                     24h Trades
                   </span>
                   <span className='text-sm font-semibold'>
-                    {totalTrades24h}
+                    {formatCompactNumber(totalTrades24h)}
                   </span>
                 </div>
               </div>
