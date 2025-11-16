@@ -10,14 +10,14 @@ export const metadata = {
 export default async function CreateAgentPage() {
   return (
     <PageContainer scrollable={true}>
-      <div className='flex w-full flex-col'>
-        <div className='mb-4 flex items-center justify-between'>
+      <div className='flex flex-1 flex-col space-y-4'>
+        <div className='flex items-start justify-between'>
           <Heading
             title='Create Agent'
             description='Deploy a new autonomous AI trading agent with custom strategies, risk parameters, and market preferences'
           />
         </div>
-        <Separator className='mb-4' />
+        <Separator />
         <CreateAgentWizard />
       </div>
     </PageContainer>

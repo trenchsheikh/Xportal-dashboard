@@ -6,14 +6,14 @@ import { useCallbackRef } from '@/hooks/use-callback-ref';
  * @see https://github.com/radix-ui/primitives/blob/main/packages/react/use-controllable-state/src/useControllableState.tsx
  */
 
-function useControllableState({ prop, defaultProp, onChange = () => {} }) {
+function useControllableState({ prop, defaultProp, onChange }) {
   const [uncontrolledProp, setUncontrolledProp] = useUncontrolledState({
     defaultProp,
-    onChange
+    onChange: onChange || (() => {})
   });
   const isControlled = prop !== undefined;
   const value = isControlled ? prop : uncontrolledProp;
-  const handleChange = useCallbackRef(onChange);
+  const handleChange = useCallbackRef(onChange || (() => {}));
 
   const setValue = React.useCallback(
     (nextValue) => {

@@ -10,84 +10,22 @@ import {
   IconTrendingUp,
   IconTrendingDown,
   IconArrowRight,
-  IconEye
+  IconEye,
+  IconChartLine,
+  IconTarget,
+  IconShield,
+  IconTrophy,
+  IconChartBar
 } from '@tabler/icons-react';
 import Link from 'next/link';
-import {
-  LineChart,
-  Line,
-  BarChart,
-  Bar,
-  PieChart,
-  Pie,
-  Cell,
-  XAxis,
-  YAxis,
-  ResponsiveContainer,
-  Tooltip,
-  CartesianGrid
-} from 'recharts';
 
 export default function XportalOverview() {
-  const {
-    totalValue,
-    realizedPnl,
-    unrealizedPnl,
-    openPositions,
-    performance7d
-  } = mockPortfolio;
+  const { totalValue, realizedPnl, unrealizedPnl, openPositions } =
+    mockPortfolio;
   const totalPnl = realizedPnl + unrealizedPnl;
   const totalPnlPercent = ((totalPnl / (totalValue - totalPnl)) * 100).toFixed(
     2
   );
-
-  // Generate portfolio performance time series data (similar to Live Agent Console)
-  const generatePortfolioEquityData = (days: number = 60) => {
-    const now = new Date();
-    const data = [];
-    const initialValue = totalValue - totalPnl;
-
-    for (let i = days; i >= 0; i--) {
-      const date = new Date(now);
-      date.setDate(date.getDate() - i);
-      const dateStr = date.toISOString().split('T')[0];
-
-      let value: number;
-
-      // Use performance30d data for last 30 days
-      if (i <= 30 && mockPortfolio.performance30d.length > 0) {
-        const index = Math.min(
-          Math.floor(
-            ((30 - i) / 30) * (mockPortfolio.performance30d.length - 1)
-          ),
-          mockPortfolio.performance30d.length - 1
-        );
-        value = mockPortfolio.performance30d[index];
-      } else if (i <= 60 && mockPortfolio.performance7d.length > 0) {
-        // Use performance7d for days 31-60, interpolate
-        const progress = (60 - i) / 30; // 0 to 1 over 30 days
-        const startValue = mockPortfolio.performance7d[0] || initialValue;
-        const endValue =
-          mockPortfolio.performance30d[0] ||
-          mockPortfolio.performance7d[mockPortfolio.performance7d.length - 1] ||
-          totalValue;
-        value = startValue + (endValue - startValue) * progress;
-      } else {
-        // For earlier dates, use initial value
-        value = initialValue;
-      }
-
-      data.push({
-        date: dateStr,
-        timestamp: date.getTime(),
-        value: Math.max(initialValue * 0.8, value) // Ensure value is reasonable
-      });
-    }
-
-    return data;
-  };
-
-  const portfolioChartData = generatePortfolioEquityData(60);
 
   const activeAgents = mockAgents.filter((a) => a.status === 'Active');
   const totalAgents = mockAgents.length;
@@ -96,343 +34,425 @@ export default function XportalOverview() {
     0
   );
   const totalTrades24h = mockAgents.reduce((sum, a) => sum + a.trades24h, 0);
+  const totalTrades7d = mockAgents.reduce((sum, a) => sum + a.trades7d, 0);
 
-  // Agent Performance Data (Top 5 by ROI)
-  const agentPerformanceData = [...mockAgents]
-    .sort((a, b) => b.roi - a.roi)
-    .slice(0, 5)
-    .map((agent) => ({
-      name:
-        agent.name.length > 12
-          ? agent.name.substring(0, 12) + '...'
-          : agent.name,
-      roi: agent.roi,
-      pnl: agent.pnl
-    }));
-
-  // Strategy Distribution
-  const strategyData = mockAgents.reduce(
-    (acc, agent) => {
-      const existing = acc.find((s) => s.name === agent.strategy);
-      if (existing) {
-        existing.value += 1;
-        existing.pnl += agent.pnl;
-      } else {
-        acc.push({ name: agent.strategy, value: 1, pnl: agent.pnl });
-      }
-      return acc;
-    },
-    [] as Array<{ name: string; value: number; pnl: number }>
-  );
-
-  // Chart colors
-  const COLORS = [
-    '#3b82f6',
-    '#a855f7',
-    '#f97316',
-    '#10b981',
-    '#ef4444',
-    '#eab308',
-    '#06b6d4',
-    '#8b5cf6'
-  ];
+  // Calculate statistics
+  const avgRoi = mockAgents.reduce((sum, a) => sum + a.roi, 0) / totalAgents;
+  const avgWinRate =
+    mockAgents.reduce((sum, a) => sum + a.winRate, 0) / totalAgents;
+  const avgMaxDrawdown =
+    mockAgents.reduce((sum, a) => sum + Math.abs(a.maxDrawdown), 0) /
+    totalAgents;
+  const bestAgent = [...mockAgents].sort((a, b) => b.roi - a.roi)[0];
+  const worstAgent = [...mockAgents]
+    .filter((a) => a.status === 'Active')
+    .sort((a, b) => a.roi - b.roi)[0];
+  const totalPnlAgents = mockAgents.reduce((sum, a) => sum + a.pnl, 0);
+  const avgPositionSize = totalAllocated / (openPositions || 1);
 
   return (
-    <div className='flex flex-1 flex-col overflow-hidden p-4 md:px-6'>
+    <div className='flex h-full flex-col overflow-hidden'>
       {/* Header Section */}
-      <div className='mb-4 flex items-center justify-between'>
+      <div className='mb-3 flex items-center justify-between border-b pb-3'>
         <div>
-          <h1 className='text-2xl font-bold tracking-tight'>Dashboard</h1>
+          <h1 className='text-2xl font-bold tracking-tight'>
+            Portfolio Overview
+          </h1>
           <p className='text-muted-foreground text-sm'>
             AI-powered prediction market portfolio
           </p>
         </div>
-        <Badge variant='outline' className='gap-1.5'>
-          <IconRobot className='h-3.5 w-3.5' />
+        <Badge variant='outline' className='gap-1.5 px-3 py-1.5 text-sm'>
+          <IconRobot className='h-4 w-4' />
           {activeAgents.length} Active Agents
         </Badge>
       </div>
 
-      <div className='grid h-full grid-cols-1 gap-4 lg:grid-cols-12'>
-        {/* Left Column - Portfolio Value (Large) */}
-        <div className='flex flex-col space-y-4 lg:col-span-8'>
+      {/* Main Content Grid */}
+      <div className='grid flex-1 grid-cols-12 gap-3 overflow-hidden'>
+        {/* Left Column - Main Metrics */}
+        <div className='col-span-12 flex flex-col gap-3 overflow-hidden lg:col-span-8'>
           {/* Portfolio Value Card */}
-          <Card className='flex flex-1 flex-col'>
-            <CardContent className='flex flex-1 flex-col p-4'>
-              <div className='mb-3 flex items-start justify-between'>
-                <div>
+          <Card className='flex-shrink-0'>
+            <CardContent className='p-4'>
+              <div className='flex items-start justify-between'>
+                <div className='flex-1'>
                   <p className='text-muted-foreground mb-1 text-sm'>
                     Total Portfolio Value
                   </p>
-                  <h2 className='text-4xl font-bold tabular-nums'>
-                    {totalValue.toLocaleString('en-US', {
-                      style: 'currency',
-                      currency: 'USD',
-                      minimumFractionDigits: 0,
-                      maximumFractionDigits: 0
-                    })}
-                  </h2>
-                  <div className='mt-2 flex items-center gap-2'>
-                    {totalPnl >= 0 ? (
-                      <IconTrendingUp className='h-4 w-4 text-green-600 dark:text-green-400' />
-                    ) : (
-                      <IconTrendingDown className='h-4 w-4 text-red-600 dark:text-red-400' />
-                    )}
-                    <span
-                      className={`text-sm font-semibold ${
-                        totalPnl >= 0
-                          ? 'text-green-600 dark:text-green-400'
-                          : 'text-red-600 dark:text-red-400'
-                      }`}
-                    >
-                      {totalPnl >= 0 ? '+' : ''}
-                      {totalPnl.toLocaleString('en-US', {
+                  <div className='flex items-baseline gap-3'>
+                    <h2 className='text-3xl font-bold tabular-nums'>
+                      {totalValue.toLocaleString('en-US', {
                         style: 'currency',
                         currency: 'USD',
-                        minimumFractionDigits: 0
-                      })}{' '}
-                      ({totalPnlPercent >= 0 ? '+' : ''}
-                      {totalPnlPercent}%)
-                    </span>
-                  </div>
-                </div>
-                <Badge variant='outline' className='text-xs'>
-                  {openPositions} open positions
-                </Badge>
-              </div>
-
-              {/* Portfolio Performance Line Chart */}
-              <div className='mt-3 h-[250px]'>
-                <ResponsiveContainer width='100%' height='100%'>
-                  <LineChart
-                    data={portfolioChartData}
-                    margin={{ top: 5, right: 20, left: 0, bottom: 20 }}
-                  >
-                    <CartesianGrid
-                      strokeDasharray='3 3'
-                      stroke='hsl(var(--border))'
-                    />
-                    <XAxis
-                      dataKey='date'
-                      tick={{ fontSize: 10 }}
-                      tickFormatter={(value) => {
-                        try {
-                          const date = new Date(value);
-                          if (isNaN(date.getTime())) return value;
-                          const now = new Date();
-                          const isToday =
-                            date.toDateString() === now.toDateString();
-                          if (isToday) {
-                            return date.toLocaleTimeString('en-US', {
-                              hour: '2-digit',
-                              minute: '2-digit'
-                            });
-                          }
-                          return date.toLocaleDateString('en-US', {
-                            month: 'short',
-                            day: 'numeric'
-                          });
-                        } catch {
-                          return value;
-                        }
-                      }}
-                    />
-                    <YAxis
-                      tick={{ fontSize: 10 }}
-                      tickFormatter={(value) =>
-                        `$${(value / 1000).toFixed(0)}k`
-                      }
-                    />
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: 'hsl(var(--card))',
-                        border: 'none'
-                      }}
-                      formatter={(value: number) =>
-                        value.toLocaleString('en-US', {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0
+                      })}
+                    </h2>
+                    <div className='flex items-center gap-1.5'>
+                      {totalPnl >= 0 ? (
+                        <IconTrendingUp className='h-4 w-4 text-green-600 dark:text-green-400' />
+                      ) : (
+                        <IconTrendingDown className='h-4 w-4 text-red-600 dark:text-red-400' />
+                      )}
+                      <span
+                        className={`text-sm font-semibold ${
+                          totalPnl >= 0
+                            ? 'text-green-600 dark:text-green-400'
+                            : 'text-red-600 dark:text-red-400'
+                        }`}
+                      >
+                        {totalPnl >= 0 ? '+' : ''}
+                        {totalPnl.toLocaleString('en-US', {
                           style: 'currency',
                           currency: 'USD',
                           minimumFractionDigits: 0
-                        })
-                      }
-                      labelFormatter={(value) => {
-                        const date = new Date(value);
-                        return date.toLocaleDateString('en-US', {
-                          month: 'short',
-                          day: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        });
-                      }}
-                    />
-                    <Line
-                      type='monotone'
-                      dataKey='value'
-                      stroke='hsl(var(--primary))'
-                      strokeWidth={2}
-                      dot={false}
-                      activeDot={{ r: 4, fill: 'hsl(var(--primary))' }}
-                      name='Portfolio Value'
-                      isAnimationActive={false}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
+                        })}{' '}
+                        ({totalPnlPercent >= 0 ? '+' : ''}
+                        {totalPnlPercent}%)
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <Badge variant='outline' className='px-2.5 py-1 text-sm'>
+                  {openPositions} open
+                </Badge>
+              </div>
+
+              {/* Performance Statistics Grid */}
+              <div className='mt-4 grid grid-cols-5 gap-3'>
+                <div className='flex flex-col'>
+                  <p className='text-muted-foreground mb-1 text-xs'>
+                    Daily P&L
+                  </p>
+                  <p
+                    className={`text-sm font-semibold tabular-nums ${
+                      mockPortfolio.dailyPnl >= 0
+                        ? 'text-green-600 dark:text-green-400'
+                        : 'text-red-600 dark:text-red-400'
+                    }`}
+                  >
+                    {mockPortfolio.dailyPnl >= 0 ? '+' : ''}
+                    {mockPortfolio.dailyPnl.toLocaleString('en-US', {
+                      style: 'currency',
+                      currency: 'USD',
+                      minimumFractionDigits: 0
+                    })}
+                  </p>
+                </div>
+                <div className='flex flex-col'>
+                  <p className='text-muted-foreground mb-1 text-xs'>
+                    Weekly P&L
+                  </p>
+                  <p
+                    className={`text-sm font-semibold tabular-nums ${
+                      mockPortfolio.weeklyPnl >= 0
+                        ? 'text-green-600 dark:text-green-400'
+                        : 'text-red-600 dark:text-red-400'
+                    }`}
+                  >
+                    {mockPortfolio.weeklyPnl >= 0 ? '+' : ''}
+                    {mockPortfolio.weeklyPnl.toLocaleString('en-US', {
+                      style: 'currency',
+                      currency: 'USD',
+                      minimumFractionDigits: 0
+                    })}
+                  </p>
+                </div>
+                <div className='flex flex-col'>
+                  <p className='text-muted-foreground mb-1 text-xs'>
+                    Monthly P&L
+                  </p>
+                  <p
+                    className={`text-sm font-semibold tabular-nums ${
+                      mockPortfolio.monthlyPnl >= 0
+                        ? 'text-green-600 dark:text-green-400'
+                        : 'text-red-600 dark:text-red-400'
+                    }`}
+                  >
+                    {mockPortfolio.monthlyPnl >= 0 ? '+' : ''}
+                    {mockPortfolio.monthlyPnl.toLocaleString('en-US', {
+                      style: 'currency',
+                      currency: 'USD',
+                      minimumFractionDigits: 0
+                    })}
+                  </p>
+                </div>
+                <div className='flex flex-col'>
+                  <p className='text-muted-foreground mb-1 text-xs'>
+                    Realized P&L
+                  </p>
+                  <p className='text-sm font-semibold text-green-600 tabular-nums dark:text-green-400'>
+                    +
+                    {realizedPnl.toLocaleString('en-US', {
+                      style: 'currency',
+                      currency: 'USD',
+                      minimumFractionDigits: 0
+                    })}
+                  </p>
+                </div>
+                <div className='flex flex-col'>
+                  <p className='text-muted-foreground mb-1 text-xs'>
+                    Unrealized P&L
+                  </p>
+                  <p
+                    className={`text-sm font-semibold tabular-nums ${
+                      unrealizedPnl >= 0
+                        ? 'text-green-600 dark:text-green-400'
+                        : 'text-red-600 dark:text-red-400'
+                    }`}
+                  >
+                    {unrealizedPnl >= 0 ? '+' : ''}
+                    {unrealizedPnl.toLocaleString('en-US', {
+                      style: 'currency',
+                      currency: 'USD',
+                      minimumFractionDigits: 0
+                    })}
+                  </p>
+                </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Quick Stats Grid */}
-          <div className='grid grid-cols-2 gap-3'>
-            <Card>
+          {/* Stats Grid */}
+          <div className='grid flex-1 grid-cols-2 gap-3 overflow-hidden lg:grid-cols-4'>
+            {/* Trading Performance */}
+            <Card className='flex-shrink-0'>
               <CardContent className='p-4'>
-                <p className='text-muted-foreground mb-1 text-xs'>
-                  Realized P&L
-                </p>
-                <p className='text-xl font-semibold text-green-600 tabular-nums dark:text-green-400'>
-                  +
-                  {realizedPnl.toLocaleString('en-US', {
-                    style: 'currency',
-                    currency: 'USD',
-                    minimumFractionDigits: 0
-                  })}
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className='p-4'>
-                <p className='text-muted-foreground mb-1 text-xs'>
-                  Unrealized P&L
-                </p>
-                <p
-                  className={`text-xl font-semibold tabular-nums ${
-                    unrealizedPnl >= 0
-                      ? 'text-green-600 dark:text-green-400'
-                      : 'text-red-600 dark:text-red-400'
-                  }`}
-                >
-                  {unrealizedPnl >= 0 ? '+' : ''}
-                  {unrealizedPnl.toLocaleString('en-US', {
-                    style: 'currency',
-                    currency: 'USD',
-                    minimumFractionDigits: 0
-                  })}
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Charts Grid */}
-          <div className='grid grid-cols-1 gap-3 lg:grid-cols-2'>
-            {/* Agent Performance Bar Chart */}
-            <Card>
-              <CardContent className='p-3'>
-                <p className='mb-2 text-xs font-semibold'>
-                  Top Agent Performance (ROI)
-                </p>
-                <div className='h-[150px]'>
-                  <ResponsiveContainer width='100%' height='100%'>
-                    <BarChart data={agentPerformanceData}>
-                      <CartesianGrid
-                        strokeDasharray='3 3'
-                        stroke='hsl(var(--border))'
-                        vertical={false}
-                      />
-                      <XAxis
-                        dataKey='name'
-                        tick={{ fontSize: 11 }}
-                        angle={-45}
-                        textAnchor='end'
-                        height={60}
-                      />
-                      <YAxis tick={{ fontSize: 11 }} />
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: 'hsl(var(--card))',
-                          border: 'none'
-                        }}
-                        formatter={(value: number) => `${value.toFixed(2)}%`}
-                      />
-                      <Bar
-                        dataKey='roi'
-                        fill='hsl(var(--primary))'
-                        radius={[4, 4, 0, 0]}
-                      />
-                    </BarChart>
-                  </ResponsiveContainer>
+                <div className='mb-3 flex items-center gap-2'>
+                  <IconTarget className='text-muted-foreground h-4 w-4' />
+                  <p className='text-sm font-semibold'>Trading Performance</p>
+                </div>
+                <div className='space-y-2.5'>
+                  <div className='flex items-center justify-between'>
+                    <span className='text-muted-foreground text-xs'>
+                      Avg Win Rate
+                    </span>
+                    <span className='text-sm font-semibold'>
+                      {avgWinRate.toFixed(1)}%
+                    </span>
+                  </div>
+                  <div className='flex items-center justify-between'>
+                    <span className='text-muted-foreground text-xs'>
+                      Avg ROI
+                    </span>
+                    <span className='text-sm font-semibold text-green-600 dark:text-green-400'>
+                      +{avgRoi.toFixed(2)}%
+                    </span>
+                  </div>
+                  <div className='flex items-center justify-between'>
+                    <span className='text-muted-foreground text-xs'>
+                      Total Trades (7d)
+                    </span>
+                    <span className='text-sm font-semibold'>
+                      {totalTrades7d}
+                    </span>
+                  </div>
+                  <div className='flex items-center justify-between'>
+                    <span className='text-muted-foreground text-xs'>
+                      24h Trades
+                    </span>
+                    <span className='text-sm font-semibold'>
+                      {totalTrades24h}
+                    </span>
+                  </div>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Strategy Distribution Pie Chart */}
-            <Card>
-              <CardContent className='p-3'>
-                <p className='mb-2 text-xs font-semibold'>
-                  Strategy Distribution
-                </p>
-                <div className='h-[150px]'>
-                  <ResponsiveContainer width='100%' height='100%'>
-                    <PieChart>
-                      <Pie
-                        data={strategyData}
-                        cx='50%'
-                        cy='50%'
-                        labelLine={false}
-                        label={({ name, percent }) =>
-                          `${name} ${(percent * 100).toFixed(0)}%`
-                        }
-                        outerRadius={55}
-                        fill='#8884d8'
-                        dataKey='value'
+            {/* Risk Metrics */}
+            <Card className='flex-shrink-0'>
+              <CardContent className='p-4'>
+                <div className='mb-3 flex items-center gap-2'>
+                  <IconShield className='text-muted-foreground h-4 w-4' />
+                  <p className='text-sm font-semibold'>Risk & Performance</p>
+                </div>
+                <div className='space-y-2.5'>
+                  <div className='flex items-center justify-between'>
+                    <span className='text-muted-foreground text-xs'>
+                      Avg Max Drawdown
+                    </span>
+                    <span className='text-sm font-semibold text-red-600 dark:text-red-400'>
+                      -{avgMaxDrawdown.toFixed(1)}%
+                    </span>
+                  </div>
+                  <div className='flex items-center justify-between'>
+                    <span className='text-muted-foreground text-xs'>
+                      Avg Position Size
+                    </span>
+                    <span className='text-sm font-semibold tabular-nums'>
+                      {avgPositionSize.toLocaleString('en-US', {
+                        style: 'currency',
+                        currency: 'USD',
+                        minimumFractionDigits: 0
+                      })}
+                    </span>
+                  </div>
+                  <div className='flex items-center justify-between'>
+                    <span className='text-muted-foreground text-xs'>
+                      Total Agent P&L
+                    </span>
+                    <span className='text-sm font-semibold text-green-600 tabular-nums dark:text-green-400'>
+                      +
+                      {totalPnlAgents.toLocaleString('en-US', {
+                        style: 'currency',
+                        currency: 'USD',
+                        minimumFractionDigits: 0
+                      })}
+                    </span>
+                  </div>
+                  <div className='flex items-center justify-between'>
+                    <span className='text-muted-foreground text-xs'>
+                      Capital Utilization
+                    </span>
+                    <span className='text-sm font-semibold'>
+                      {((totalAllocated / totalValue) * 100).toFixed(0)}%
+                    </span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Best Performer */}
+            <Card className='flex-shrink-0'>
+              <CardContent className='p-4'>
+                <div className='mb-3 flex items-center gap-2'>
+                  <IconTrophy className='h-4 w-4 text-yellow-600 dark:text-yellow-400' />
+                  <p className='text-sm font-semibold'>Best Performer</p>
+                </div>
+                <div className='space-y-2.5'>
+                  <div className='flex items-center justify-between'>
+                    <span className='truncate text-sm font-medium'>
+                      {bestAgent.name}
+                    </span>
+                    <Badge
+                      variant='outline'
+                      className='ml-2 px-1.5 py-0.5 text-xs'
+                    >
+                      {bestAgent.strategy}
+                    </Badge>
+                  </div>
+                  <div className='flex items-center justify-between'>
+                    <span className='text-muted-foreground text-xs'>ROI</span>
+                    <span className='text-sm font-semibold text-green-600 dark:text-green-400'>
+                      +{bestAgent.roi.toFixed(2)}%
+                    </span>
+                  </div>
+                  <div className='flex items-center justify-between'>
+                    <span className='text-muted-foreground text-xs'>P&L</span>
+                    <span className='text-sm font-semibold text-green-600 tabular-nums dark:text-green-400'>
+                      +
+                      {bestAgent.pnl.toLocaleString('en-US', {
+                        style: 'currency',
+                        currency: 'USD',
+                        minimumFractionDigits: 0
+                      })}
+                    </span>
+                  </div>
+                  <div className='flex items-center justify-between'>
+                    <span className='text-muted-foreground text-xs'>
+                      Win Rate
+                    </span>
+                    <span className='text-sm font-semibold'>
+                      {bestAgent.winRate.toFixed(1)}%
+                    </span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Needs Attention */}
+            {worstAgent && (
+              <Card className='flex-shrink-0'>
+                <CardContent className='p-4'>
+                  <div className='mb-3 flex items-center gap-2'>
+                    <IconTrendingDown className='text-muted-foreground h-4 w-4' />
+                    <p className='text-sm font-semibold'>Needs Attention</p>
+                  </div>
+                  <div className='space-y-2.5'>
+                    <div className='flex items-center justify-between'>
+                      <span className='truncate text-sm font-medium'>
+                        {worstAgent.name}
+                      </span>
+                      <Badge
+                        variant='outline'
+                        className='ml-2 px-1.5 py-0.5 text-xs'
                       >
-                        {strategyData.map((entry, index) => (
-                          <Cell
-                            key={`cell-${index}`}
-                            fill={COLORS[index % COLORS.length]}
-                          />
-                        ))}
-                      </Pie>
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: 'hsl(var(--card))',
-                          border: 'none'
-                        }}
-                        formatter={(value: number) => `${value} agents`}
-                      />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </Card>
+                        {worstAgent.strategy}
+                      </Badge>
+                    </div>
+                    <div className='flex items-center justify-between'>
+                      <span className='text-muted-foreground text-xs'>ROI</span>
+                      <span
+                        className={`text-sm font-semibold ${
+                          worstAgent.roi >= 0
+                            ? 'text-green-600 dark:text-green-400'
+                            : 'text-red-600 dark:text-red-400'
+                        }`}
+                      >
+                        {worstAgent.roi >= 0 ? '+' : ''}
+                        {worstAgent.roi.toFixed(2)}%
+                      </span>
+                    </div>
+                    <div className='flex items-center justify-between'>
+                      <span className='text-muted-foreground text-xs'>P&L</span>
+                      <span
+                        className={`text-sm font-semibold tabular-nums ${
+                          worstAgent.pnl >= 0
+                            ? 'text-green-600 dark:text-green-400'
+                            : 'text-red-600 dark:text-red-400'
+                        }`}
+                      >
+                        {worstAgent.pnl >= 0 ? '+' : ''}
+                        {worstAgent.pnl.toLocaleString('en-US', {
+                          style: 'currency',
+                          currency: 'USD',
+                          minimumFractionDigits: 0
+                        })}
+                      </span>
+                    </div>
+                    <div className='flex items-center justify-between'>
+                      <span className='text-muted-foreground text-xs'>
+                        Win Rate
+                      </span>
+                      <span className='text-sm font-semibold'>
+                        {worstAgent.winRate.toFixed(1)}%
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
 
         {/* Right Column - Agent Summary & Actions */}
-        <div className='flex flex-col space-y-4 lg:col-span-4'>
+        <div className='col-span-12 flex flex-col gap-3 overflow-hidden lg:col-span-4'>
           {/* Agent Fleet Summary */}
-          <Card className='flex-1'>
+          <Card className='flex-shrink-0'>
             <CardContent className='p-4'>
-              <div className='mb-4 flex items-center justify-between'>
+              <div className='mb-3 flex items-center justify-between'>
                 <div className='flex items-center gap-2'>
-                  <IconRobot className='text-muted-foreground h-5 w-5' />
+                  <IconRobot className='text-muted-foreground h-4 w-4' />
                   <p className='text-sm font-semibold'>Agent Fleet</p>
                 </div>
-                <Badge variant='outline'>
+                <Badge variant='outline' className='px-2.5 py-1 text-sm'>
                   {activeAgents.length}/{totalAgents} Active
                 </Badge>
               </div>
 
-              <div className='mb-4 space-y-3'>
+              <div className='mb-3 space-y-2.5'>
                 <div className='flex items-center justify-between'>
-                  <span className='text-muted-foreground text-sm'>
+                  <span className='text-muted-foreground text-xs'>
                     Total Agents
                   </span>
-                  <span className='text-lg font-semibold'>{totalAgents}</span>
+                  <span className='text-sm font-semibold'>{totalAgents}</span>
                 </div>
                 <div className='flex items-center justify-between'>
-                  <span className='text-muted-foreground text-sm'>
+                  <span className='text-muted-foreground text-xs'>
                     Allocated Capital
                   </span>
-                  <span className='text-lg font-semibold tabular-nums'>
+                  <span className='text-sm font-semibold tabular-nums'>
                     {totalAllocated.toLocaleString('en-US', {
                       style: 'currency',
                       currency: 'USD',
@@ -441,25 +461,35 @@ export default function XportalOverview() {
                   </span>
                 </div>
                 <div className='flex items-center justify-between'>
-                  <span className='text-muted-foreground text-sm'>
+                  <span className='text-muted-foreground text-xs'>
                     24h Trades
                   </span>
-                  <span className='text-lg font-semibold'>
+                  <span className='text-sm font-semibold'>
                     {totalTrades24h}
                   </span>
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className='space-y-2 border-t pt-4'>
-                <Button asChild className='w-full' variant='default'>
+              <div className='space-y-2 border-t pt-3'>
+                <Button
+                  asChild
+                  className='h-9 w-full text-sm'
+                  variant='default'
+                  size='sm'
+                >
                   <Link href='/dashboard/agents'>
                     <IconEye className='mr-2 h-4 w-4' />
                     View All Agents
                     <IconArrowRight className='ml-auto h-4 w-4' />
                   </Link>
                 </Button>
-                <Button asChild className='w-full' variant='outline'>
+                <Button
+                  asChild
+                  className='h-9 w-full text-sm'
+                  variant='outline'
+                  size='sm'
+                >
                   <Link href='/dashboard/agents/create'>
                     <IconPlus className='mr-2 h-4 w-4' />
                     Create New Agent
@@ -470,14 +500,15 @@ export default function XportalOverview() {
           </Card>
 
           {/* Quick Actions */}
-          <Card>
+          <Card className='flex-1 overflow-hidden'>
             <CardContent className='p-4'>
-              <p className='mb-4 text-sm font-semibold'>Quick Actions</p>
-              <div className='space-y-2'>
+              <p className='mb-3 text-sm font-semibold'>Quick Actions</p>
+              <div className='space-y-1.5'>
                 <Button
                   asChild
                   variant='ghost'
-                  className='w-full justify-start'
+                  className='h-9 w-full justify-start text-sm'
+                  size='sm'
                 >
                   <Link href='/dashboard/agents/console'>
                     Live Agent Console
@@ -487,7 +518,8 @@ export default function XportalOverview() {
                 <Button
                   asChild
                   variant='ghost'
-                  className='w-full justify-start'
+                  className='h-9 w-full justify-start text-sm'
+                  size='sm'
                 >
                   <Link href='/dashboard/markets'>
                     Browse Markets
@@ -497,7 +529,8 @@ export default function XportalOverview() {
                 <Button
                   asChild
                   variant='ghost'
-                  className='w-full justify-start'
+                  className='h-9 w-full justify-start text-sm'
+                  size='sm'
                 >
                   <Link href='/dashboard/settings'>
                     Settings
