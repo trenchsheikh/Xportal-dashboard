@@ -271,12 +271,18 @@ export default function DemoForm() {
 
             {/* Submit Button */}
             <div className='flex gap-4 pt-4'>
-              <Button type='submit' className='flex-1'>
+              <Button
+                type='submit'
+                variant='default'
+                size='default'
+                className='flex-1'
+              >
                 Submit Form
               </Button>
               <Button
                 type='button'
                 variant='outline'
+                size='default'
                 onClick={() => form.reset()}
                 className='flex-1'
               >
