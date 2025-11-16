@@ -3,7 +3,6 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import { mockPortfolio, mockAgents } from '@/lib/mock-data';
 import {
   IconRobot,
@@ -268,15 +267,55 @@ export default function XportalOverview() {
             </CardContent>
           </Card>
 
+          {/* Quick Stats Grid */}
+          <div className='grid grid-cols-2 gap-3'>
+            <Card>
+              <CardContent className='p-4'>
+                <p className='text-muted-foreground mb-1 text-xs'>
+                  Realized P&L
+                </p>
+                <p className='text-xl font-semibold text-green-600 tabular-nums dark:text-green-400'>
+                  +
+                  {realizedPnl.toLocaleString('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
+                    minimumFractionDigits: 0
+                  })}
+                </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className='p-4'>
+                <p className='text-muted-foreground mb-1 text-xs'>
+                  Unrealized P&L
+                </p>
+                <p
+                  className={`text-xl font-semibold tabular-nums ${
+                    unrealizedPnl >= 0
+                      ? 'text-green-600 dark:text-green-400'
+                      : 'text-red-600 dark:text-red-400'
+                  }`}
+                >
+                  {unrealizedPnl >= 0 ? '+' : ''}
+                  {unrealizedPnl.toLocaleString('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
+                    minimumFractionDigits: 0
+                  })}
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
           {/* Charts Grid */}
           <div className='grid grid-cols-1 gap-3 lg:grid-cols-2'>
             {/* Agent Performance Bar Chart */}
             <Card>
-              <CardContent className='p-4'>
-                <p className='mb-3 text-sm font-semibold'>
+              <CardContent className='p-3'>
+                <p className='mb-2 text-xs font-semibold'>
                   Top Agent Performance (ROI)
                 </p>
-                <div className='h-[220px]'>
+                <div className='h-[150px]'>
                   <ResponsiveContainer width='100%' height='100%'>
                     <BarChart data={agentPerformanceData}>
                       <CartesianGrid
@@ -312,11 +351,11 @@ export default function XportalOverview() {
 
             {/* Strategy Distribution Pie Chart */}
             <Card>
-              <CardContent className='p-4'>
-                <p className='mb-3 text-sm font-semibold'>
+              <CardContent className='p-3'>
+                <p className='mb-2 text-xs font-semibold'>
                   Strategy Distribution
                 </p>
-                <div className='h-[220px]'>
+                <div className='h-[150px]'>
                   <ResponsiveContainer width='100%' height='100%'>
                     <PieChart>
                       <Pie
@@ -327,7 +366,7 @@ export default function XportalOverview() {
                         label={({ name, percent }) =>
                           `${name} ${(percent * 100).toFixed(0)}%`
                         }
-                        outerRadius={75}
+                        outerRadius={55}
                         fill='#8884d8'
                         dataKey='value'
                       >
@@ -394,84 +433,6 @@ export default function XportalOverview() {
                   <span className='text-lg font-semibold'>
                     {totalTrades24h}
                   </span>
-                </div>
-              </div>
-
-              <Separator className='my-4' />
-
-              {/* Top Performing Agents */}
-              <div className='mb-4'>
-                <p className='mb-2 text-xs font-semibold text-green-600 dark:text-green-400'>
-                  Top Performers
-                </p>
-                <div className='space-y-2'>
-                  {[...mockAgents]
-                    .sort((a, b) => b.roi - a.roi)
-                    .slice(0, 2)
-                    .map((agent) => (
-                      <div
-                        key={agent.id}
-                        className='bg-muted/50 flex items-center justify-between rounded-md p-2'
-                      >
-                        <div className='flex items-center gap-2'>
-                          <IconRobot className='text-muted-foreground h-4 w-4' />
-                          <span className='text-xs font-medium'>
-                            {agent.name}
-                          </span>
-                        </div>
-                        <div className='flex items-center gap-1'>
-                          <IconTrendingUp className='h-3 w-3 text-green-600' />
-                          <span className='text-xs font-semibold text-green-600 tabular-nums dark:text-green-400'>
-                            +{agent.roi.toFixed(1)}%
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                </div>
-              </div>
-
-              {/* Underperforming Agents */}
-              <div className='mb-4'>
-                <p className='mb-2 text-xs font-semibold text-red-600 dark:text-red-400'>
-                  Underperformers
-                </p>
-                <div className='space-y-2'>
-                  {[...mockAgents]
-                    .sort((a, b) => a.roi - b.roi)
-                    .filter((agent) => agent.roi < 10) // Only show agents with ROI < 10%
-                    .slice(0, 2)
-                    .map((agent) => (
-                      <div
-                        key={agent.id}
-                        className='bg-muted/50 flex items-center justify-between rounded-md p-2'
-                      >
-                        <div className='flex items-center gap-2'>
-                          <IconRobot className='text-muted-foreground h-4 w-4' />
-                          <span className='text-xs font-medium'>
-                            {agent.name}
-                          </span>
-                        </div>
-                        <div className='flex items-center gap-1'>
-                          <IconTrendingDown className='h-3 w-3 text-red-600' />
-                          <span
-                            className={`text-xs font-semibold tabular-nums ${
-                              agent.roi >= 0
-                                ? 'text-green-600 dark:text-green-400'
-                                : 'text-red-600 dark:text-red-400'
-                            }`}
-                          >
-                            {agent.roi >= 0 ? '+' : ''}
-                            {agent.roi.toFixed(1)}%
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  {[...mockAgents].filter((agent) => agent.roi < 10).length ===
-                    0 && (
-                    <div className='bg-muted/50 text-muted-foreground rounded-md p-2 text-center text-xs'>
-                      All agents performing well
-                    </div>
-                  )}
                 </div>
               </div>
 
