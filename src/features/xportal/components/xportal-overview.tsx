@@ -5,6 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { mockPortfolio, mockAgents } from '@/lib/mock-data';
 import {
+  formatCompactCurrency,
+  formatPercent,
+  formatCompactNumber
+} from '@/lib/utils';
+import {
   IconRobot,
   IconPlus,
   IconTrendingUp,
@@ -23,9 +28,7 @@ export default function XportalOverview() {
   const { totalValue, realizedPnl, unrealizedPnl, openPositions } =
     mockPortfolio;
   const totalPnl = realizedPnl + unrealizedPnl;
-  const totalPnlPercent = ((totalPnl / (totalValue - totalPnl)) * 100).toFixed(
-    2
-  );
+  const totalPnlPercent = (totalPnl / (totalValue - totalPnl)) * 100;
 
   const activeAgents = mockAgents.filter((a) => a.status === 'Active');
   const totalAgents = mockAgents.length;
@@ -80,36 +83,25 @@ export default function XportalOverview() {
                   <p className='text-muted-foreground mb-1 text-sm'>
                     Total Portfolio Value
                   </p>
-                  <div className='flex items-baseline gap-3'>
-                    <h2 className='text-3xl font-bold tabular-nums'>
-                      {totalValue.toLocaleString('en-US', {
-                        style: 'currency',
-                        currency: 'USD',
-                        minimumFractionDigits: 0,
-                        maximumFractionDigits: 0
-                      })}
+                  <div className='flex items-baseline gap-4'>
+                    <h2 className='text-3xl font-bold'>
+                      {formatCompactCurrency(totalValue)}
                     </h2>
                     <div className='flex items-center gap-1.5'>
                       {totalPnl >= 0 ? (
-                        <IconTrendingUp className='h-4 w-4 text-green-600 dark:text-green-400' />
+                        <IconTrendingUp className='h-5 w-5 text-green-600 dark:text-green-400' />
                       ) : (
-                        <IconTrendingDown className='h-4 w-4 text-red-600 dark:text-red-400' />
+                        <IconTrendingDown className='h-5 w-5 text-red-600 dark:text-red-400' />
                       )}
                       <span
-                        className={`text-sm font-semibold ${
+                        className={`text-base font-semibold ${
                           totalPnl >= 0
                             ? 'text-green-600 dark:text-green-400'
                             : 'text-red-600 dark:text-red-400'
                         }`}
                       >
-                        {totalPnl >= 0 ? '+' : ''}
-                        {totalPnl.toLocaleString('en-US', {
-                          style: 'currency',
-                          currency: 'USD',
-                          minimumFractionDigits: 0
-                        })}{' '}
-                        ({totalPnlPercent >= 0 ? '+' : ''}
-                        {totalPnlPercent}%)
+                        {formatCompactCurrency(totalPnl, { showSign: true })}{' '}
+                        {formatPercent(totalPnlPercent, { showSign: true })}
                       </span>
                     </div>
                   </div>
@@ -119,96 +111,31 @@ export default function XportalOverview() {
                 </Badge>
               </div>
 
-              {/* Performance Statistics Grid */}
-              <div className='mt-4 grid grid-cols-5 gap-3'>
-                <div className='flex flex-col'>
-                  <p className='text-muted-foreground mb-1 text-xs'>
-                    Daily P&L
-                  </p>
-                  <p
-                    className={`text-sm font-semibold tabular-nums ${
-                      mockPortfolio.dailyPnl >= 0
-                        ? 'text-green-600 dark:text-green-400'
-                        : 'text-red-600 dark:text-red-400'
-                    }`}
-                  >
-                    {mockPortfolio.dailyPnl >= 0 ? '+' : ''}
-                    {mockPortfolio.dailyPnl.toLocaleString('en-US', {
-                      style: 'currency',
-                      currency: 'USD',
-                      minimumFractionDigits: 0
-                    })}
-                  </p>
+              {/* Simplified Performance Summary */}
+              <div className='mt-4 flex items-center gap-6 border-t pt-4'>
+                <div className='flex items-center gap-2'>
+                  <IconChartLine className='text-muted-foreground h-4 w-4' />
+                  <span className='text-muted-foreground text-xs'>
+                    Realized
+                  </span>
+                  <span className='text-sm font-semibold text-green-600 dark:text-green-400'>
+                    {formatCompactCurrency(realizedPnl, { showSign: true })}
+                  </span>
                 </div>
-                <div className='flex flex-col'>
-                  <p className='text-muted-foreground mb-1 text-xs'>
-                    Weekly P&L
-                  </p>
-                  <p
-                    className={`text-sm font-semibold tabular-nums ${
-                      mockPortfolio.weeklyPnl >= 0
-                        ? 'text-green-600 dark:text-green-400'
-                        : 'text-red-600 dark:text-red-400'
-                    }`}
-                  >
-                    {mockPortfolio.weeklyPnl >= 0 ? '+' : ''}
-                    {mockPortfolio.weeklyPnl.toLocaleString('en-US', {
-                      style: 'currency',
-                      currency: 'USD',
-                      minimumFractionDigits: 0
-                    })}
-                  </p>
-                </div>
-                <div className='flex flex-col'>
-                  <p className='text-muted-foreground mb-1 text-xs'>
-                    Monthly P&L
-                  </p>
-                  <p
-                    className={`text-sm font-semibold tabular-nums ${
-                      mockPortfolio.monthlyPnl >= 0
-                        ? 'text-green-600 dark:text-green-400'
-                        : 'text-red-600 dark:text-red-400'
-                    }`}
-                  >
-                    {mockPortfolio.monthlyPnl >= 0 ? '+' : ''}
-                    {mockPortfolio.monthlyPnl.toLocaleString('en-US', {
-                      style: 'currency',
-                      currency: 'USD',
-                      minimumFractionDigits: 0
-                    })}
-                  </p>
-                </div>
-                <div className='flex flex-col'>
-                  <p className='text-muted-foreground mb-1 text-xs'>
-                    Realized P&L
-                  </p>
-                  <p className='text-sm font-semibold text-green-600 tabular-nums dark:text-green-400'>
-                    +
-                    {realizedPnl.toLocaleString('en-US', {
-                      style: 'currency',
-                      currency: 'USD',
-                      minimumFractionDigits: 0
-                    })}
-                  </p>
-                </div>
-                <div className='flex flex-col'>
-                  <p className='text-muted-foreground mb-1 text-xs'>
-                    Unrealized P&L
-                  </p>
-                  <p
-                    className={`text-sm font-semibold tabular-nums ${
+                <div className='flex items-center gap-2'>
+                  <IconChartBar className='text-muted-foreground h-4 w-4' />
+                  <span className='text-muted-foreground text-xs'>
+                    Unrealized
+                  </span>
+                  <span
+                    className={`text-sm font-semibold ${
                       unrealizedPnl >= 0
                         ? 'text-green-600 dark:text-green-400'
                         : 'text-red-600 dark:text-red-400'
                     }`}
                   >
-                    {unrealizedPnl >= 0 ? '+' : ''}
-                    {unrealizedPnl.toLocaleString('en-US', {
-                      style: 'currency',
-                      currency: 'USD',
-                      minimumFractionDigits: 0
-                    })}
-                  </p>
+                    {formatCompactCurrency(unrealizedPnl, { showSign: true })}
+                  </span>
                 </div>
               </div>
             </CardContent>
@@ -335,18 +262,13 @@ export default function XportalOverview() {
                   <div className='flex items-center justify-between'>
                     <span className='text-muted-foreground text-xs'>ROI</span>
                     <span className='text-sm font-semibold text-green-600 dark:text-green-400'>
-                      +{bestAgent.roi.toFixed(2)}%
+                      {formatPercent(bestAgent.roi, { showSign: true })}
                     </span>
                   </div>
                   <div className='flex items-center justify-between'>
                     <span className='text-muted-foreground text-xs'>P&L</span>
-                    <span className='text-sm font-semibold text-green-600 tabular-nums dark:text-green-400'>
-                      +
-                      {bestAgent.pnl.toLocaleString('en-US', {
-                        style: 'currency',
-                        currency: 'USD',
-                        minimumFractionDigits: 0
-                      })}
+                    <span className='text-sm font-semibold text-green-600 dark:text-green-400'>
+                      {formatCompactCurrency(bestAgent.pnl, { showSign: true })}
                     </span>
                   </div>
                   <div className='flex items-center justify-between'>
@@ -354,7 +276,7 @@ export default function XportalOverview() {
                       Win Rate
                     </span>
                     <span className='text-sm font-semibold'>
-                      {bestAgent.winRate.toFixed(1)}%
+                      {formatPercent(bestAgent.winRate)}
                     </span>
                   </div>
                 </div>
@@ -390,24 +312,20 @@ export default function XportalOverview() {
                             : 'text-red-600 dark:text-red-400'
                         }`}
                       >
-                        {worstAgent.roi >= 0 ? '+' : ''}
-                        {worstAgent.roi.toFixed(2)}%
+                        {formatPercent(worstAgent.roi, { showSign: true })}
                       </span>
                     </div>
                     <div className='flex items-center justify-between'>
                       <span className='text-muted-foreground text-xs'>P&L</span>
                       <span
-                        className={`text-sm font-semibold tabular-nums ${
+                        className={`text-sm font-semibold ${
                           worstAgent.pnl >= 0
                             ? 'text-green-600 dark:text-green-400'
                             : 'text-red-600 dark:text-red-400'
                         }`}
                       >
-                        {worstAgent.pnl >= 0 ? '+' : ''}
-                        {worstAgent.pnl.toLocaleString('en-US', {
-                          style: 'currency',
-                          currency: 'USD',
-                          minimumFractionDigits: 0
+                        {formatCompactCurrency(worstAgent.pnl, {
+                          showSign: true
                         })}
                       </span>
                     </div>
@@ -416,7 +334,7 @@ export default function XportalOverview() {
                         Win Rate
                       </span>
                       <span className='text-sm font-semibold'>
-                        {worstAgent.winRate.toFixed(1)}%
+                        {formatPercent(worstAgent.winRate)}
                       </span>
                     </div>
                   </div>
