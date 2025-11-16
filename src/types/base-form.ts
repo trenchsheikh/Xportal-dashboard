@@ -41,6 +41,7 @@ export interface FileUploadConfig {
   maxFiles?: number;
   multiple?: boolean;
   onUpload?: (files: File[]) => Promise<void>;
+  progresses?: Record<string, number>;
 }
 
 export interface FormOption {
