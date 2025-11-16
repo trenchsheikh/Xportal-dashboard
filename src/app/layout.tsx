@@ -16,8 +16,9 @@ const META_THEME_COLORS = {
 };
 
 export const metadata: Metadata = {
-  title: 'Next Shadcn',
-  description: 'Basic dashboard with Next.js and Shadcn'
+  title: 'Xportal - USDC-native prediction markets powered by AI traders',
+  description:
+    'Xportal – A USDC-native prediction market on Circle Arc powered by personal AI traders.'
 };
 
 export const viewport: Viewport = {

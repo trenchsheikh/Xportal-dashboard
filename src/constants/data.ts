@@ -14,49 +14,56 @@ export type Product = {
 //Info: The following data is used for the sidebar navigation and Cmd K bar.
 export const navItems: NavItem[] = [
   {
-    title: 'Dashboard',
+    title: 'Overview',
     url: '/dashboard/overview',
     icon: 'dashboard',
     isActive: false,
-    shortcut: ['d', 'd'],
-    items: [] // Empty array as there are no child items for Dashboard
+    shortcut: ['o', 'o'],
+    items: []
   },
   {
-    title: 'Product',
-    url: '/dashboard/product',
+    title: 'Markets',
+    url: '/dashboard/markets',
     icon: 'product',
-    shortcut: ['p', 'p'],
+    shortcut: ['m', 'm'],
     isActive: false,
-    items: [] // No child items
+    items: []
   },
   {
-    title: 'Account',
-    url: '#', // Placeholder as there is no direct link for the parent
-    icon: 'billing',
+    title: 'Agent Fleet',
+    url: '/dashboard/agents',
+    icon: 'kanban',
+    shortcut: ['a', 'a'],
+    isActive: false,
+    items: []
+  },
+  {
+    title: 'Live Console',
+    url: '/dashboard/agents/console',
+    icon: 'settings',
+    shortcut: ['c', 'c'],
+    isActive: false,
+    items: []
+  },
+  {
+    title: 'Settings',
+    url: '#',
+    icon: 'settings',
     isActive: true,
-
     items: [
       {
         title: 'Profile',
         url: '/dashboard/profile',
         icon: 'userPen',
-        shortcut: ['m', 'm']
+        shortcut: ['p', 'r']
       },
       {
-        title: 'Login',
-        shortcut: ['l', 'l'],
-        url: '/',
-        icon: 'login'
+        title: 'Preferences',
+        url: '/dashboard/settings',
+        icon: 'settings',
+        shortcut: ['s', 's']
       }
     ]
-  },
-  {
-    title: 'Kanban',
-    url: '/dashboard/kanban',
-    icon: 'kanban',
-    shortcut: ['k', 'k'],
-    isActive: false,
-    items: [] // No child items
   }
 ];
 
