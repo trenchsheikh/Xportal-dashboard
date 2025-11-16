@@ -14,7 +14,7 @@ export default async function SettingsPage() {
         <div className='flex items-start justify-between'>
           <Heading
             title='Settings'
-            description='Manage your preferences and global risk limits'
+            description='Configure global preferences, risk management parameters, and system-wide agent controls'
           />
         </div>
         <Separator />

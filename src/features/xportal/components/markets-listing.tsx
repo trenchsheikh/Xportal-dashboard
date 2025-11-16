@@ -26,19 +26,50 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import type { Market, MarketCategory, MarketStatus } from '@/types/xportal';
-import { IconRobot, IconSearch } from '@tabler/icons-react';
-import { mockMarkets } from '@/lib/mock-data';
-import { useState } from 'react';
+import { IconRobot, IconSearch, IconRefresh } from '@tabler/icons-react';
+import { useState, useEffect } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import Link from 'next/link';
 
-export function MarketsListing() {
-  const [markets] = useState<Market[]>(mockMarkets);
+interface MarketsListingProps {
+  initialMarkets?: Market[];
+}
+
+export function MarketsListing({ initialMarkets = [] }: MarketsListingProps) {
+  const [markets, setMarkets] = useState<Market[]>(initialMarkets);
+  const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<MarketCategory | 'All'>(
     'All'
   );
   const [statusFilter, setStatusFilter] = useState<MarketStatus | 'All'>('All');
+
+  // Fetch markets from API
+  const fetchMarkets = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/markets');
+      if (response.ok) {
+        const data = await response.json();
+        setMarkets(data.markets || []);
+      }
+    } catch (error) {
+      console.error('Error fetching markets:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Refresh markets periodically
+  useEffect(() => {
+    if (initialMarkets.length === 0) {
+      fetchMarkets();
+    }
+    // Refresh every 60 seconds
+    const interval = setInterval(fetchMarkets, 60000);
+    return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const filteredMarkets = markets.filter((market) => {
     const matchesSearch =
@@ -68,6 +99,18 @@ export function MarketsListing() {
                 />
               </div>
             </div>
+            <Button
+              variant='outline'
+              size='sm'
+              onClick={fetchMarkets}
+              disabled={isLoading}
+              className='w-full md:w-auto'
+            >
+              <IconRefresh
+                className={`mr-2 h-4 w-4 ${isLoading ? 'animate-spin' : ''}`}
+              />
+              Refresh
+            </Button>
             <Select
               value={categoryFilter}
               onValueChange={(v) =>
@@ -106,11 +149,20 @@ export function MarketsListing() {
       {/* Markets Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Markets</CardTitle>
-          <CardDescription>
-            {filteredMarkets.length} market
-            {filteredMarkets.length !== 1 ? 's' : ''} found
-          </CardDescription>
+          <div className='flex items-center justify-between'>
+            <div>
+              <CardTitle>Live Markets</CardTitle>
+              <CardDescription>
+                {filteredMarkets.length} market
+                {filteredMarkets.length !== 1 ? 's' : ''} found
+                {isLoading && ' • Refreshing...'}
+              </CardDescription>
+            </div>
+            <Badge variant='outline' className='gap-1'>
+              <div className='h-2 w-2 animate-pulse rounded-full bg-green-500' />
+              Live Data
+            </Badge>
+          </div>
         </CardHeader>
         <CardContent>
           <Table>

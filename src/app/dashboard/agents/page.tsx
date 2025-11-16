@@ -19,7 +19,7 @@ export default async function AgentsPage() {
         <div className='flex items-start justify-between'>
           <Heading
             title='Agent Fleet'
-            description='Manage your autonomous AI trading agents'
+            description='Manage your autonomous AI trading agents - monitor performance, adjust strategies, and deploy new agents'
           />
           <Link
             href='/dashboard/agents/create'

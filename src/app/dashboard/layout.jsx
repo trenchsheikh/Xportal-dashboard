@@ -11,8 +11,10 @@ export const metadata = {
 
 export default async function DashboardLayout({ children }) {
   // Persisting the sidebar state in the cookie.
+  // Default to true (open) if no cookie is set
   const cookieStore = await cookies();
-  const defaultOpen = cookieStore.get('sidebar_state')?.value === 'true';
+  const sidebarState = cookieStore.get('sidebar_state')?.value;
+  const defaultOpen = sidebarState === 'false' ? false : true;
   return (
     <KBar>
       <SidebarProvider defaultOpen={defaultOpen}>

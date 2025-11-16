@@ -9,12 +9,12 @@ export const metadata = {
 
 export default async function AgentConsolePage() {
   return (
-    <PageContainer scrollable={false}>
+    <PageContainer scrollable={true}>
       <div className='flex flex-1 flex-col space-y-4'>
         <div className='flex items-start justify-between'>
           <Heading
             title='Live Agent Console'
-            description="Monitor your agents in real-time: see what they're thinking, their holdings, and live P&L"
+            description='Real-time monitoring of your AI agents: watch their decision-making process, track positions, and monitor live performance'
           />
         </div>
         <Separator />

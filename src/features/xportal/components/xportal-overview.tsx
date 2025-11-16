@@ -139,6 +139,20 @@ export default function XportalOverview() {
 
   return (
     <div className='flex flex-1 flex-col overflow-hidden p-4 md:px-6'>
+      {/* Header Section */}
+      <div className='mb-4 flex items-center justify-between'>
+        <div>
+          <h1 className='text-2xl font-bold tracking-tight'>Dashboard</h1>
+          <p className='text-muted-foreground text-sm'>
+            AI-powered prediction market portfolio
+          </p>
+        </div>
+        <Badge variant='outline' className='gap-1.5'>
+          <IconRobot className='h-3.5 w-3.5' />
+          {activeAgents.length} Active Agents
+        </Badge>
+      </div>
+
       <div className='grid h-full grid-cols-1 gap-4 lg:grid-cols-12'>
         {/* Left Column - Portfolio Value (Large) */}
         <div className='flex flex-col space-y-4 lg:col-span-8'>

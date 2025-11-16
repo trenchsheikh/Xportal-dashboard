@@ -14,7 +14,7 @@ export default async function CreateAgentPage() {
         <div className='mb-4 flex items-center justify-between'>
           <Heading
             title='Create Agent'
-            description='Configure a new autonomous AI trading agent'
+            description='Deploy a new autonomous AI trading agent with custom strategies, risk parameters, and market preferences'
           />
         </div>
         <Separator className='mb-4' />

@@ -114,6 +114,48 @@ export function AgentFleetListing() {
 
   return (
     <div className='space-y-6'>
+      {/* Stats Summary */}
+      <div className='grid grid-cols-2 gap-4 md:grid-cols-4'>
+        <Card>
+          <CardContent className='p-4'>
+            <p className='text-muted-foreground mb-1 text-xs'>Total Agents</p>
+            <p className='text-2xl font-bold'>{agents.length}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className='p-4'>
+            <p className='text-muted-foreground mb-1 text-xs'>Active</p>
+            <p className='text-2xl font-bold text-green-600 dark:text-green-400'>
+              {agents.filter((a) => a.status === 'Active').length}
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className='p-4'>
+            <p className='text-muted-foreground mb-1 text-xs'>
+              Total Allocated
+            </p>
+            <p className='text-lg font-semibold tabular-nums'>
+              {agents
+                .reduce((sum, a) => sum + a.allocatedUsdc, 0)
+                .toLocaleString('en-US', {
+                  style: 'currency',
+                  currency: 'USD',
+                  minimumFractionDigits: 0
+                })}
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className='p-4'>
+            <p className='text-muted-foreground mb-1 text-xs'>24h Trades</p>
+            <p className='text-2xl font-bold'>
+              {agents.reduce((sum, a) => sum + a.trades24h, 0)}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
       {/* Filter Bar */}
       <div className='flex items-center gap-2'>
         <Button

@@ -53,6 +53,8 @@ export interface Market {
   outcomes: MarketOutcome[];
   hasActiveAgents: boolean;
   agentExposure?: AgentExposure[];
+  imageUrl?: string;
+  image?: string;
 }
 
 export interface MarketOutcome {
