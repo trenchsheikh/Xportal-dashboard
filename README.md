@@ -1,126 +1,199 @@
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://user-images.githubusercontent.com/9113740/201498864-2a900c64-d88f-4ed4-b5cf-770bcb57e1f5.png">
-  <source media="(prefers-color-scheme: light)" srcset="https://user-images.githubusercontent.com/9113740/201498152-b171abb8-9225-487a-821c-6ff49ee48579.png">
-</picture>
+# Xportal 🚀
 
-<div align="center"><strong>Next.js Admin Dashboard Starter Template With Shadcn-ui</strong></div>
-<div align="center">Built with the Next.js 15 App Router</div>
-<br />
-<div align="center">
-<a href="https://dub.sh/shadcn-dashboard">View Demo</a>
-<span>
-</div>
+> A USDC-native prediction market on Circle Arc powered by personal AI traders
 
-## Overview
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-xportalp.vercel.app-blue?style=for-the-badge)](https://xportalp.vercel.app/)
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
+[![Circle Arc](https://img.shields.io/badge/Circle%20Arc-Powered-green?style=for-the-badge)](https://www.circle.com/)
 
-This is a starter template using the following stack:
+## 🌟 Overview
 
-- Framework - [Next.js 15](https://nextjs.org/13)
-- Language - [TypeScript](https://www.typescriptlang.org)
-- Auth - [Clerk](https://go.clerk.com/ILdYhn7)
-- Error tracking  [<picture><img alt="Sentry" src="public/assets/sentry.svg">
-        </picture>](https://sentry.io/for/nextjs/?utm_source=github&utm_medium=paid-community&utm_campaign=general-fy26q2-nextjs&utm_content=github-banner-project-tryfree)
-- Styling - [Tailwind CSS v4](https://tailwindcss.com)
-- Components - [Shadcn-ui](https://ui.shadcn.com)
-- Schema Validations - [Zod](https://zod.dev)
-- State Management - [Zustand](https://zustand-demo.pmnd.rs)
-- Search params state manager - [Nuqs](https://nuqs.47ng.com/)
-- Tables - [Tanstack Data Tables](https://ui.shadcn.com/docs/components/data-table) • [Dice table](https://www.diceui.com/docs/components/data-table)
-- Forms - [React Hook Form](https://ui.shadcn.com/docs/components/form)
-- Command+k interface - [kbar](https://kbar.vercel.app/)
-- Linting - [ESLint](https://eslint.org)
-- Pre-commit Hooks - [Husky](https://typicode.github.io/husky/)
-- Formatting - [Prettier](https://prettier.io)
+Xportal revolutionizes prediction markets by introducing autonomous AI micro-agents that continuously scan markets, evaluate opportunities, assess risk, and execute trades in USDC outcome shares. Built on Circle Arc, Xportal provides a seamless, intelligent trading experience where you stay in control while your AI analysts handle the heavy lifting.
 
-_If you are looking for a Tanstack start dashboard template, here is the [repo](https://git.new/tanstack-start-dashboard)._
+### 🎯 Key Features
 
-## Pages
+- **🤖 Autonomous AI Traders** - Deploy personal micro-agents that work 24/7 to optimize your trading strategy
+- **💰 USDC-Native** - All trading happens in USDC on Circle Arc for stable, predictable transactions
+- **📊 Real-Time Analytics** - Comprehensive dashboard with portfolio tracking, agent performance metrics, and market insights
+- **🔄 Continuous Liquidity** - AI agents provide 24/7 liquidity, ensuring markets stay active and accessible
+- **🎯 Smart Pricing** - Data-driven agents evaluate opportunities rationally, leading to more accurate market prices
+- **👥 Full Control** - Monitor and manage your agents while they handle trading behind the scenes
 
-| Pages                                                                                 | Specifications                                                                                                                                                                                                                                                          |
-| :------------------------------------------------------------------------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [Signup / Signin](https://go.clerk.com/ILdYhn7)      | Authentication with **Clerk** provides secure authentication and user management with multiple sign-in options including passwordless authentication, social logins, and enterprise SSO - all designed to enhance security while delivering a seamless user experience. |
-| [Dashboard (Overview)](https://shadcn-dashboard.kiranism.dev/dashboard)    | Cards with Recharts graphs for analytics. Parallel routes in the overview sections feature independent loading, error handling, and isolated component rendering. |
-| [Product](https://shadcn-dashboard.kiranism.dev/dashboard/product)         | Tanstack tables with server side searching, filter, pagination by Nuqs which is a Type-safe search params state manager in nextjs                                                                                                                                       |
-| [Product/new](https://shadcn-dashboard.kiranism.dev/dashboard/product/new) | A Product Form with shadcn form (react-hook-form + zod).                                                                                                                                                                                                                |
-| [Profile](https://shadcn-dashboard.kiranism.dev/dashboard/profile)         | Clerk's full-featured account management UI that allows users to manage their profile and security settings                                                                                                                                                             |
-| [Kanban Board](https://shadcn-dashboard.kiranism.dev/dashboard/kanban)     | A Drag n Drop task management board with dnd-kit and zustand to persist state locally.                                                                                                                                                                                  |
-| [Not Found](https://shadcn-dashboard.kiranism.dev/dashboard/notfound)      | Not Found Page Added in the root level                                                                                                                                                                                                                                  |
-| [Global Error](https://sentry.io/for/nextjs/?utm_source=github&utm_medium=paid-community&utm_campaign=general-fy26q2-nextjs&utm_content=github-banner-project-tryfree)           | A centralized error page that captures and displays errors across the application. Integrated with **Sentry** to log errors, provide detailed reports, and enable replay functionality for better debugging. |
+## 🏗️ How It Works
 
-## Feature based organization
+Your personal AI traders work autonomously behind the scenes through a sophisticated four-step process:
 
-```plaintext
+1. **Scan** - Micro-agents continuously scan markets for opportunities
+2. **Score** - Evaluate and score each opportunity based on comprehensive data analysis
+3. **Evaluate** - Assess risk and changing market conditions in real-time
+4. **Trade** - Execute USDC outcome share trades rationally and autonomously
+
+### Agent Network Architecture
+
+Xportal employs specialized AI agents that continuously scan data sources and market signals:
+
+- **Agent Alpha** - Technical Analysis
+- **Agent Beta** - Sentiment Analysis  
+- **Agent Gamma** - Risk Management
+- **Aggregator** - Data Hub for market aggregation
+
+Each agent focuses on different aspects of market analysis including volume, price action, sentiment, market data, news, trends, risk, and liquidity.
+
+## 🚀 Live Demo
+
+**Experience Xportal now:** [https://xportalp.vercel.app/](https://xportalp.vercel.app/)
+
+## 🛠️ Tech Stack
+
+### Frontend
+- **Framework:** [Next.js 15](https://nextjs.org/) with App Router
+- **Language:** [TypeScript](https://www.typescriptlang.org/)
+- **UI Components:** [Shadcn/ui](https://ui.shadcn.com/)
+- **Styling:** [Tailwind CSS v4](https://tailwindcss.com/)
+- **Icons:** [Tabler Icons](https://tabler.io/icons) & [Lucide React](https://lucide.dev/)
+- **Charts:** [Recharts](https://recharts.org/)
+- **Forms:** [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/)
+
+### State Management & Utilities
+- **State:** [Zustand](https://zustand-demo.pmnd.rs/)
+- **URL State:** [Nuqs](https://nuqs.47ng.com/)
+- **Tables:** [TanStack Table](https://tanstack.com/table)
+- **Drag & Drop:** [dnd-kit](https://dndkit.com/)
+
+### Infrastructure
+- **Deployment:** [Vercel](https://vercel.com/)
+- **Blockchain:** [Circle Arc](https://www.circle.com/)
+- **Currency:** USDC (USD Coin)
+
+## 📁 Project Structure
+
+```
 src/
-├── app/ # Next.js App Router directory
-│ ├── (auth)/ # Auth route group
-│ │ ├── (signin)/
-│ ├── (dashboard)/ # Dashboard route group
-│ │ ├── layout.tsx
-│ │ ├── loading.tsx
-│ │ └── page.tsx
-│ └── api/ # API routes
-│
-├── components/ # Shared components
-│ ├── ui/ # UI components (buttons, inputs, etc.)
-│ └── layout/ # Layout components (header, sidebar, etc.)
-│
-├── features/ # Feature-based modules
-│ ├── feature/
-│ │ ├── components/ # Feature-specific components
-│ │ ├── actions/ # Server actions
-│ │ ├── schemas/ # Form validation schemas
-│ │ └── utils/ # Feature-specific utilities
-│ │
-├── lib/ # Core utilities and configurations
-│ ├── auth/ # Auth configuration
-│ ├── db/ # Database utilities
-│ └── utils/ # Shared utilities
-│
-├── hooks/ # Custom hooks
-│ └── use-debounce.ts
-│
-├── stores/ # Zustand stores
-│ └── dashboard-store.ts
-│
-└── types/ # TypeScript types
-└── index.ts
+├── app/                    # Next.js App Router
+│   ├── dashboard/          # Dashboard routes
+│   │   ├── agents/         # AI agent management
+│   │   ├── markets/        # Prediction markets
+│   │   ├── overview/       # Dashboard overview
+│   │   └── settings/       # User settings
+│   └── api/                # API routes
+├── components/             # React components
+│   ├── ui/                 # Shadcn UI components
+│   ├── layout/             # Layout components
+│   └── ...
+├── features/               # Feature-based modules
+│   └── xportal/            # Xportal-specific features
+│       └── components/    # Feature components
+├── lib/                    # Utilities and helpers
+├── hooks/                  # Custom React hooks
+└── types/                  # TypeScript type definitions
 ```
 
-## Getting Started
+## 🚀 Getting Started
 
-> [!NOTE]  
-> We are using **Next 15** with **React 19**, follow these steps:
+### Prerequisites
 
-Clone the repo:
+- Node.js 18+ 
+- pnpm (recommended) or npm/yarn
 
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd Xportal-dashboard
+   ```
+
+2. **Install dependencies**
+   ```bash
+   pnpm install
+   ```
+
+3. **Set up environment variables**
+   ```bash
+   cp env.example.txt .env.local
+   ```
+   
+   Add your environment variables to `.env.local`:
+   - Clerk authentication keys (if using auth)
+   - Circle Arc API keys
+   - Other required configuration
+
+4. **Run the development server**
+   ```bash
+   pnpm dev
+   ```
+
+5. **Open your browser**
+   Navigate to [http://localhost:3000](http://localhost:3000)
+
+### Build for Production
+
+```bash
+pnpm build
+pnpm start
 ```
-git clone https://github.com/Kiranism/next-shadcn-dashboard-starter.git
-```
 
-- `pnpm install` ( we have legacy-peer-deps=true added in the .npmrc)
-- Create a `.env.local` file by copying the example environment file:
-  `cp env.example.txt .env.local`
-- Add the required environment variables to the `.env.local` file.
-- `pnpm run dev`
+## 📊 Features
 
-##### Environment Configuration Setup
+### Dashboard Overview
+- Real-time portfolio value tracking
+- PnL (Profit & Loss) analytics
+- Agent performance metrics
+- Market activity snapshots
+- Quick action shortcuts
 
-To configure the environment for this project, refer to the `env.example.txt` file. This file contains the necessary environment variables required for authentication and error tracking.
+### Agent Fleet Management
+- Create and deploy new AI trading agents
+- Monitor agent performance and statistics
+- Configure trading strategies and parameters
+- View agent ROI, win rates, and trade history
+- Live agent console for real-time monitoring
 
-You should now be able to access the application at http://localhost:3000.
+### Markets Integration
+- Browse live prediction markets from Polymarket
+- View market details, odds, and liquidity
+- Real-time market data and price movements
+- Agent-automated trading on selected markets
 
-> [!WARNING]
-> After cloning or forking the repository, be cautious when pulling or syncing with the latest changes, as this may result in breaking conflicts.
+### Portfolio Management
+- Track positions across all markets
+- Monitor PnL breakdown by agent and market
+- Analyze trading history and performance
+- USDC balance and allocation tracking
 
-Cheers! 🥂
+## 🎨 Design
 
-## Star History
+Xportal features a modern, clean interface built with:
+- Responsive design for all devices
+- Dark/light theme support
+- Smooth animations and transitions
+- Intuitive navigation and user experience
 
-<a href="https://www.star-history.com/#Kiranism/next-shadcn-dashboard-starter&type=date&legend=top-left">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Kiranism/next-shadcn-dashboard-starter&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=Kiranism/next-shadcn-dashboard-starter&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=Kiranism/next-shadcn-dashboard-starter&type=date&legend=top-left" />
- </picture>
-</a>
+## 👥 Creators
 
+Built with ❤️ by:
+
+- **Sami** - 
+- **Enaiho** 
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Built on [Circle Arc](https://www.circle.com/) for USDC-native infrastructure
+- Market data integration with [Polymarket](https://polymarket.com/)
+- UI components from [Shadcn/ui](https://ui.shadcn.com/)
+- Built with [Next.js](https://nextjs.org/) and the amazing open-source community
+
+## 🔗 Links
+
+- **Live Demo:** [https://xportalp.vercel.app/](https://xportalp.vercel.app/)
+- **Documentation:** Coming soon
+- **GitHub:** [Repository Link]
+
+---
+
+**Ready to deploy your AI traders?** [Get Started →](https://xportalp.vercel.app/)
